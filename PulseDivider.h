@@ -133,7 +133,7 @@ public:
 //
 //  MAIN WORKER
 //
-  bool check()
+  void check()
   {
     if (!_running) return;
     uint8_t value = digitalRead(_inPin);
@@ -153,7 +153,6 @@ public:
     {
       digitalWrite(_outPin, _invert ? HIGH : LOW);
     }
-    return (value == HIGH);
   }
 
 
