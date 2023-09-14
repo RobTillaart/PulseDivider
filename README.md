@@ -28,7 +28,7 @@ Furthermore as the library polls the input for pulses, the timing is not as exac
 when it would be interrupt driven.
 
 As the library is generic it will always be slower than a dedicated divide strategy and
-definitly slower than dedicated hardware.
+definitely slower than dedicated hardware.
 
 Not being interrupt driven is by choice to keep the (first versions of) the library portable
 over different boards. There is therefore no optimization done for any board.
@@ -155,7 +155,7 @@ math and calls **doPulse()** when an output pulse is needed.
 
 - performance measurements
 - test different platforms, configurations, ratios etc.
-- optimize math possible? (16 bit iso 32 bit for UNO).
+- optimize math possible? (16 bit instead of 32 bit for UNO).
 
 
 #### Could
