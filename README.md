@@ -94,13 +94,17 @@ In the first tests the library seems to work well, however more testing is neede
 
 - **PulseDivider(uint8_t inPin, uint8_t outPin, uint16_t inCount, uint16_t outCount, uint32_t duration = 1, uint8_t edge = RISING, bool invert = false)**
   - Define input pin and output pin.
-  - inCount and outCount define the ratio, (8,1) defines 1 output for 8 input pulses.
-    these numbers may be a fraction e.g. (355, 113). inCount >= outCount > 0.
-    The range for both should be 1..30000 max, typically both less 1000.
+  - inCount and outCount define the ratio, (8,1) defines 8 input pulses will have 1 output pulse.
+    These numbers may be a fraction e.g. (355, 113) = 3.141592...  
+    The user must take care that inCount >= outCount > 0.
+    The range for inCount can be 1..65534 max, the sum of inCount and outCount should not exceed 65535.
+    typically both are less than 1000.
   - duration, default 1 is the number of micros the output pulse will minimally take. 
     the accuracy is board dependent. 
   - edge is RISING or FALLING (same as interrupt parameter).
   - invert, inverts the output pulse with respect to the input pulse.
+
+The PulseDivider can do an 65534 to 1 reduction.
 
 
 #### Getters / Setters
@@ -168,7 +172,7 @@ math and calls **doPulse()** when an output pulse is needed.
   - platform specific ?
 - **uint8_t check()** return status of in as that is most often polled?
   - can this give a performance gain?
-- make inCount and outCount 32 bit?
+- make inCount and outCount 32 bit? even finer fractions.
   - would slow it down
   - would 8 bit make it faster?
 

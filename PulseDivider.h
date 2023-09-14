@@ -4,11 +4,10 @@
 //  AUTHOR: Rob Tillaart
 // VERSION: 0.1.0
 //    DATE: 2023-09-13
-// PURPOSE: Arduino library to divide a pulsestream with a float factor.
+// PURPOSE: Arduino library to divide a pulse stream with a float factor.
 //     URL: https://github.com/RobTillaart/PulseDivider
 //
-// Tested with UNO.
-//
+
 
 #include "Arduino.h"
 
@@ -135,14 +134,14 @@ public:
   void check()
   {
     if (!_running) return;
-    uint8_t  value = digitalRead(_inPin);
+    uint8_t value = digitalRead(_inPin);
     // handle EDGE
     if ((_edge == RISING) and (_prevState == LOW) and (value == HIGH))
     {
       //  RISING
       doPulse();
     }
-    if ((_edge == FALLING) and (_prevState == HIGH) and (value == LOW))
+    else if ((_edge == FALLING) and (_prevState == HIGH) and (value == LOW))
     {
       //  FALLING
       doPulse();
