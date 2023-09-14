@@ -69,6 +69,10 @@ In short, it is strongly advised to run your own tests to see if the library
 meets your performance and quality needs. 
 As said before the numbers above are indicative at best.
 
+Tested with a 1 KHz base signal (from a scope) in combination with the example
+**PulseDivider_same_input.ino** which divides the input signal by 10, 100 and 1000.
+Worked very well.
+
 
 #### Accuracy
 
@@ -98,32 +102,35 @@ In the first tests the library seems to work well, however more testing is neede
     These numbers may be a fraction e.g. (355, 113) = 3.141592...  
     The user must take care that inCount >= outCount > 0.
     The range for inCount can be 1..65534 max, the sum of inCount and outCount should not exceed 65535.
-    typically both are less than 1000.
+    Typically both are less than 1000.
   - duration, default 1 is the number of micros the output pulse will minimally take. 
-    the accuracy is board dependent. 
+    The accuracy is board dependent. 
   - edge is RISING or FALLING (same as interrupt parameter).
   - invert, inverts the output pulse with respect to the input pulse.
 
-The PulseDivider can do an 65534 to 1 reduction.
+The PulseDivider can do an 65534 to 1 reduction. 
 
 
 #### Getters / Setters
 
 See description Constructor.
 
-- **void  setInPin(uint8_t inPin)**
-- **uint8_t getInPin()**
-- **void  setOutPin(uint8_t outPin)**
-- **uint8_t getOutPin()**
-- **void setRatio(uint16_t inCount, uint16_t outCount = 1)** inCount >= outCount > 0.
-Range 1..30000 max, typically both less 1000.
+- **void setInPin(uint8_t inPin)** set or change the input pin (runtime).
+- **uint8_t getInPin()** returns the set input pin.
+- **void setOutPin(uint8_t outPin)** set or change the output pin (runtime).
+- **uint8_t getOutPin()** returns the set output pin.
+- **void setRatio(uint16_t inCount, uint16_t outCount = 1)** set the ratio between
+input pulses and the output pulses. inCount >= outCount > 0.
+The range for inCount can be 1..65534 max, the sum of inCount and outCount should not exceed 65535, 
+Typically both are less than 1000.
 - **float getRatio()** returns float(inCount)/outCount;
-- **void setDuration(uint32_t duration)**
-- **uint32_t getDuration()**
-- **void setEdge(uint8_t edge)**
-- **uint8_t getEdge()**
-- **void setInvert(bool invert)**
-- **bool getInvert()**
+- **void setDuration(uint32_t duration)** set the duration of the pulse.
+Note the unit is microseconds.
+- **uint32_t getDuration()** returns the set duration.
+- **void setEdge(uint8_t edge)** sets the "trigger" edge, RISING or FALLING.
+- **uint8_t getEdge()** returns the set trigger.
+- **void setInvert(bool invert)** inverts the output pulse with respect to the input pulse.
+- **bool getInvert()** returns the set flag.
 
 
 #### Control
@@ -134,8 +141,8 @@ Note that running other code besides the PulseDivider object(s)
 scales down the max frequency the library can handle.
 
 - **void start()** needed to get the PulseDIvider started.
-Default is not running.
-- **void stop()** stops the PulseDivider, and will also bring the
+Default the PulseDivider is not running.
+- **void stop()** stops the PulseDivider, will also bring the
 output to "default" state LOW (unless inverted).
 - **bool isRunning()** returns true if running .
 
@@ -143,7 +150,7 @@ output to "default" state LOW (unless inverted).
 #### Worker
 
 - **void check()** Call as often as possible as this worker does the
-math and calls **doPulse()** when an output pulse is needed. 
+polling, math and calls **doPulse()** when an output pulse is needed. 
 - **void doPulse()** start a pulse on the output line.
 
 

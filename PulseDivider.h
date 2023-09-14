@@ -2,7 +2,7 @@
 //
 //    FILE: PulseDivider.h
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 //    DATE: 2023-09-13
 // PURPOSE: Arduino library to divide a pulse stream with a float factor.
 //     URL: https://github.com/RobTillaart/PulseDivider
@@ -11,7 +11,7 @@
 
 #include "Arduino.h"
 
-#define PULSEDIVIDER_LIB_VERSION        (F("0.1.0"))
+#define PULSEDIVIDER_LIB_VERSION        (F("0.1.1"))
 
 
 class PulseDivider
@@ -52,6 +52,7 @@ public:
   {
     _outPin = outPin;
     pinMode(_outPin, OUTPUT);
+    digitalWrite(_outPin, _invert ? HIGH : LOW);
   }
 
   uint8_t getOutPin()
@@ -94,6 +95,7 @@ public:
   void setInvert(bool invert)
   {
     _invert = invert;
+    digitalWrite(_outPin, _invert ? HIGH : LOW);
   }
 
   bool getInvert()
@@ -131,19 +133,17 @@ public:
 //
 //  MAIN WORKER
 //
-  void check()
+  bool check()
   {
     if (!_running) return;
     uint8_t value = digitalRead(_inPin);
     // handle EDGE
     if ((_edge == RISING) and (_prevState == LOW) and (value == HIGH))
     {
-      //  RISING
       doPulse();
     }
     else if ((_edge == FALLING) and (_prevState == HIGH) and (value == LOW))
     {
-      //  FALLING
       doPulse();
     }
     _prevState = value;
@@ -153,6 +153,7 @@ public:
     {
       digitalWrite(_outPin, _invert ? HIGH : LOW);
     }
+    return (value == HIGH);
   }
 
 
