@@ -34,25 +34,27 @@ public:
   }
 
 
-#ifdef __FILE__  //  force folding
-  //  GETTERS && SETTERS
+///////////////////////////////////////////
+//
+//  GETTERS && SETTERS
+//
   void  setInPin(uint8_t inPin)
   {
     _inPin = inPin;
     pinMode(_inPin, INPUT);
   }
-  
+
   uint8_t getInPin()
   {
     return _inPin;
   }
-  
+
   void  setOutPin(uint8_t outPin)
   {
     _outPin = outPin;
     pinMode(_outPin, OUTPUT);
   }
-  
+
   uint8_t getOutPin()
   {
     return _outPin;
@@ -69,39 +71,42 @@ public:
   {
     return float(_inCount) / _outCount;
   }
-  
+
   void setDuration(uint32_t duration)
   {
     _duration = duration;
   }
-  
+
   uint32_t getDuration()
   {
     return _duration;
   }
-  
+
   void setEdge(uint8_t edge)
   {
     _edge = edge;
   }
-  
+
   uint8_t getEdge()
   {
     return _edge;
   }
-  
+
   void setInvert(bool invert)
   {
     _invert = invert;
   }
-  
+
   bool getInvert()
   {
     return _invert;
   }
-#endif
 
-  //  CONTROL
+
+///////////////////////////////////////////
+//
+//  CONTROL
+//
   void start()
   {
     _prevState = digitalRead(_inPin);
@@ -113,6 +118,7 @@ public:
   void stop()
   {
     _running  = false;
+    digitalWrite(_outPin, _invert ? HIGH : LOW);
   }
 
 
@@ -122,9 +128,13 @@ public:
   }
 
 
-  //  MAIN WORKER
+///////////////////////////////////////////
+//
+//  MAIN WORKER
+//
   void check()
   {
+    if (!_running) return;
     uint8_t  value = digitalRead(_inPin);
     // handle EDGE
     if ((_edge == RISING) and (_prevState == LOW) and (value == HIGH))
@@ -140,70 +150,21 @@ public:
     _prevState = value;
 
     //  reset the output.
-    if (micros() - _start > _duration)
+    if (micros() - _start >= _duration)
     {
       digitalWrite(_outPin, _invert ? HIGH : LOW);
     }
   }
 
-/*
-  // //  MAIN WORKER
-  // void check()
-  // {
-    // _count++;
-    // if (_count == 1000000)
-    // {
-      // Serial.println("CNT");
-      // _count = 0;
-    // }
-    // uint8_t  value = digitalRead(_inPin);
-    // doPulse();
-    // // handle EDGE
-    // if ((_edge == RISING) and (_prevState == LOW) and (value == HIGH))
-    // {
-      // //  RISING
-      // doPulse();
-    // }
-    // if ((_edge == FALLING) and (_prevState == HIGH) and (value == LOW))
-    // {
-      // //  FALLING
-      // doPulse();
-    // }
-    // _prevState = value;
 
-    // //  reset the output.
-    // if (micros() - _start > _duration)
-    // {
-      // digitalWrite(_outPin, _invert ? HIGH : LOW);
-    // }
-  // }
-
-
-  // void doPulse()
-  // {
-    // _inCount++;
-    // // Serial.println("IN");
-    // if (_outCount * _ratio < _inCount)
-    // {
-      // _start = micros();
-      // digitalWrite(_outPin, _invert ? LOW : HIGH);
-      // _outCount++;
-      // Serial.println("OUT");
-    // }
-  // }
-*/
-
-  void  doPulse()
+  void doPulse()
   {
-    //  Serial.print("IN\t");
-    //  Serial.println(_counter);
     _counter += _outCount;
     if (_counter >= _inCount)
     {
       _counter -= _inCount;
       _start = micros();
       digitalWrite(_outPin, _invert ? LOW : HIGH);
-      //  Serial.println("OUT");
     }
   }
 

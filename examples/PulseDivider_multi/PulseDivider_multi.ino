@@ -41,7 +41,7 @@ void setup()
 
 
 //  alternative with an optimized scheduling scheme.
-//  assume input 1 has a higher frequency than 
+//  assume input 1 has a higher frequency than
 //         input 2 and input 3
 void loop()
 {

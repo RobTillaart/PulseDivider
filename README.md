@@ -11,35 +11,41 @@
 
 # PulseDivider
 
-Arduino library to divide a pulsestream with a fraction factor.
+Arduino library to divide a pulse stream with a fraction factor.
 
 
 ## Description
 
-The PulseDivider (PD) is an **experimental** library to be used to scale down pulse-trains.
-The most important feature is that the library can reduce with fractions.
+The PulseDivider (PD) is an **experimental** library to be used to scale down pulse streams.
+The most important feature is that the library can reduce a pulse stream with fractions.
 This means that e.g. for every 17 input pulses there are 3 output pulses,
 or for every 355 input pulses it gives 113 output pulses.
 
-The library polls for an input pulse and if there is one, the math is done and the decision 
-is made if there will be an output pulse. This approach has a number of consequences.
-Most important is that the output pulses are definitely not equidistant.
+The library **polls** for an input pulse and if there is one, the math is done and a decision 
+is made if there will be an output pulse or not. This approach has a number of consequences.
+Most important is that the output pulses are definitely **not equidistant**.
 Furthermore as the library polls the input for pulses, the timing is not as exact as 
 when it would be interrupt driven.
 
-The latter is by choice to keep the (first versions of) the library portable over 
-different boards. There is in that sense no optimization done for any board.
-The Polling also causes the library to be suitable for a limited range of frequencies.
-On the other hand this should make the library very portable.
+As the library is generic it will always be slower than a dedicated divide strategy and
+definitly slower than dedicated hardware.
 
-The library allows to make multiple PulseDivider objects, so one can run a 10 -> 1 divider
-besides a 13 -> 5 divider or more. Due to the polling the frequency per input will drop.
+Not being interrupt driven is by choice to keep the (first versions of) the library portable
+over different boards. There is therefore no optimization done for any board.
+The polling also causes the library to be suitable for a limited range of frequencies.
+On the other hand, this is what makes the library very portable.
+
+The library allows to instantiate multiple PulseDivider objects, so one can run a 10 -> 1 
+divider besides a 13 -> 5 divider or more. 
+However due to the polling implementation the range of frequency used per input will drop.
 
 Finally it should be noted that multiple objects can share same input pin.
-This is not optimized either but allows to have one input and have both a 10 -> 1 divider
-and a 100 -> 1 divider running side by side.
+This is not optimized either but it allows to have one input and have e.g. both a 10 -> 1 
+divider and a 100 -> 1 divider running side by side.
+One could use this library to have a single 1 Hz input and divide it into a minutes
+output and an hours output.
 
-The library is still **very experimental** and under test, so as always feedback is welcome. 
+The library is still **experimental** and under test, so as always feedback is welcome. 
 
 
 #### Tests
@@ -47,19 +53,21 @@ The library is still **very experimental** and under test, so as always feedback
 Indicative maximum input frequencies.
 (based upon **PulseDivider_multi.ino**)
 
-For UNO the maximum sum of polling is around 62 KHz, so in practice 
+For the Arduino UNO the maximum sum of polling is around 62 KHz, so in practice 
 assume 50 KHz. As the signal has to restore from HIGH to LOW the 
 effective input frequency is max 25 KHz.
-One has to divide this over the number of parallel running objects. 
+One has to divide this "range" over the number of parallel running objects. 
 This can be done with equal load or with an optimized schedule.
+(See example.)
 
-For ESP32 the maximum sum of polling is around 430 KHz,
-so in practice 400 KHz, so the effective input frequency is max 200 KHz. 
-However the ESP32 seems to scale "very optimistically" in the first tests,
-Need to be investigated in more detail.
+For ESP32 the maximum sum of polling is around 430 KHz, so in practice 400 KHz, 
+so the effective input frequency is max 200 KHz. 
+However in the first tests the ESP32 seems to scale "very optimistically", so 
+this need to be investigated in more detail.
 
 In short, it is strongly advised to run your own tests to see if the library
-meets your performance needs. The numbers above are indicative at best.
+meets your performance and quality needs. 
+As said before the numbers above are indicative at best.
 
 
 #### Accuracy
@@ -89,10 +97,11 @@ In the first tests the library seems to work well, however more testing is neede
   - inCount and outCount define the ratio, (8,1) defines 1 output for 8 input pulses.
     these numbers may be a fraction e.g. (355, 113). inCount >= outCount > 0.
     The range for both should be 1..30000 max, typically both less 1000.
-  - duration, default 1 is the nr of micros the output pulse will minimally take. 
+  - duration, default 1 is the number of micros the output pulse will minimally take. 
     the accuracy is board dependent. 
-  - edge is RISING or FALLING
-  - invert, invert the output pulse wrt the input pulse.
+  - edge is RISING or FALLING (same as interrupt parameter).
+  - invert, inverts the output pulse with respect to the input pulse.
+
 
 #### Getters / Setters
 
@@ -120,9 +129,11 @@ and the state can be requested.
 Note that running other code besides the PulseDivider object(s)
 scales down the max frequency the library can handle.
 
-- **void start()**
-- **void stop()**
-- **bool isRunning()**
+- **void start()** needed to get the PulseDIvider started.
+Default is not running.
+- **void stop()** stops the PulseDivider, and will also bring the
+output to "default" state LOW (unless inverted).
+- **bool isRunning()** returns true if running .
 
 
 #### Worker
@@ -144,6 +155,7 @@ math and calls **doPulse()** when an output pulse is needed.
 
 - performance measurements
 - test different platforms, configurations, ratios etc.
+- optimize math possible? (16 bit iso 32 bit for UNO).
 
 
 #### Could
@@ -156,6 +168,9 @@ math and calls **doPulse()** when an output pulse is needed.
   - platform specific ?
 - **uint8_t check()** return status of in as that is most often polled?
   - can this give a performance gain?
+- make inCount and outCount 32 bit?
+  - would slow it down
+  - would 8 bit make it faster?
 
 
 #### Won't (unless requested)
