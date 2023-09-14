@@ -25,8 +25,6 @@
 #include "Arduino.h"
 #include "PulseDivider.h"
 
-#define A0      0
-
 
 unittest_setup()
 {
@@ -54,7 +52,7 @@ unittest(test_constructor)
   assertEqualFloat(8,  PDiv.getRatio(), 0.001);
   assertEqual(2,       PDiv.getDuration());
   assertEqual(FALLING, PDiv.getEdge());
-  assertTRue(PDiv.getInvert());
+  assertTrue(PDiv.getInvert());
 
 
   PulseDivider PDiv1(5, 6, 17, 3);
