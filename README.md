@@ -20,6 +20,7 @@ The PulseDivider (PD) is an **experimental** library to be used to scale down pu
 The most important feature is that the library can reduce a pulse stream with fractions.
 This means that e.g. for every 17 input pulses there are 3 output pulses,
 or for every 355 input pulses it gives 113 output pulses.
+Of course one can reduce the pulse stream with **n to 1**.
 
 The library **polls** for an input pulse and if there is one, the math is done and a decision 
 is made if there will be an output pulse or not. This approach has a number of consequences.
@@ -53,6 +54,8 @@ The library is still **experimental** and under test, so as always feedback is w
 Indicative maximum input frequencies.
 (based upon **PulseDivider_multi.ino**)
 
+**version 0.1.0**
+
 For the Arduino UNO the maximum sum of polling is around 62 KHz, so in practice 
 assume 50 KHz. As the signal has to restore from HIGH to LOW the 
 effective input frequency is max 25 KHz.
@@ -60,18 +63,39 @@ One has to divide this "range" over the number of parallel running objects.
 This can be done with equal load or with an optimized schedule.
 (See example.)
 
+Tested with a 1 KHz base signal (from a scope) in combination with the example
+**PulseDivider_same_input.ino** which divides the input signal by 10, 100 and 1000.
+This setup worked very well.
+
 For ESP32 the maximum sum of polling is around 430 KHz, so in practice 400 KHz, 
 so the effective input frequency is max 200 KHz. 
 However in the first tests the ESP32 seems to scale "very optimistically", so 
 this need to be investigated in more detail.
 
+**Version 0.1.1**
+
+Optimized scanning for change and optimized resetting the output.
+This means for all that the system is more reactive.
+This does not mean that higher frequencies can be handled correctly.
+
+Actual performance is more complex and depends on ratio and duration.
+
+- For the Arduino UNO the maximum check frequency (idle state) is around 190 KHz.
+- For ESP32 the maximum check frequency (idle state) is around 4600 KHz.
+The scaling for checking multiple dividers now looks far more linear (good).
+
+
+**Conclusion**
+
 In short, it is strongly advised to run your own tests to see if the library
 meets your performance and quality needs. 
 As said before the numbers above are indicative at best.
 
-Tested with a 1 KHz base signal (from a scope) in combination with the example
-**PulseDivider_same_input.ino** which divides the input signal by 10, 100 and 1000.
-Worked very well.
+
+**TODO**
+
+test with calibrated pulse generator and highest division rate 1->1.
+And rewrite this section.
 
 
 #### Accuracy

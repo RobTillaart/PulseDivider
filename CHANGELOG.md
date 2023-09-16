@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.1] - 2023-09-14
 - fix initial state output (setters).
+- optimized checking
+- optimized resetting output pulse (bool \_ops)
 - update readme.md
 - minor edits.
 
