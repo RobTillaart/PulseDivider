@@ -16,6 +16,8 @@ Arduino library to divide a pulse stream with a fraction factor.
 
 ## Description
 
+**Experimental**
+
 The PulseDivider (PD) is an **experimental** library to be used to scale down pulse streams.
 The most important feature is that the library can reduce a pulse stream with fractions.
 This means that e.g. for every 17 input pulses there are 3 output pulses,
@@ -182,7 +184,7 @@ polling, math and calls **doPulse()** when an output pulse is needed.
 
 #### Must
 
-- documentation
+- update / rewrite documentation
 - test with (calibrated) hardware.
 
 
