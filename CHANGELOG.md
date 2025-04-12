@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.1.3] - 2025-04-11
 - fix invert flag in constructor
 - add getInCount() and getOutCount() for debugging.
+- add example frequencyMultiplier.ino
 - update readme.md
 - minor edits
 

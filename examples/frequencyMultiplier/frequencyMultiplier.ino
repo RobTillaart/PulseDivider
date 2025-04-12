@@ -10,7 +10,7 @@ const int inputPin = 9;
 const int outputPin = 13;
 
 //  INPUT VARS
-int signal;
+int currentSignal;
 int lastSignal = HIGH;
 uint32_t lastHigh = 0;
 
@@ -19,6 +19,10 @@ float multiplier = 0.15;        //  0.25, 2, 3, etc
 //  OUTPUT VARS
 uint32_t lastPulse = 0;
 uint32_t outputInterval = 0;
+
+//  time it takes before output stops after input stops.
+//  depends on input frequency 
+const uint32_t STOPDELAY = 1000;
 
 
 void setup ()
@@ -35,8 +39,8 @@ void loop()
 
   //  determine input frequency by measuring between
   //  RISING edge of HIGH pulses
-  signal = digitalRead(inputPin);
-  if ((signal == HIGH) && (lastSignal == LOW))
+  currentSignal = digitalRead(inputPin);
+  if ((currentSignal == HIGH) && (lastSignal == LOW))
   {
     uint32_t inputInterval = now - lastHigh;
     outputInterval = inputInterval / multiplier / 2;
@@ -46,9 +50,9 @@ void loop()
     Serial.println(outputInterval);
     Serial.println();
   }
-  lastSignal = signal;
+  lastSignal = currentSignal;
 
-  //  generate output signal
+  //  generate output pulse
   if (outputInterval > 0)
   {
     if ((now - lastPulse) >= outputInterval)
@@ -60,8 +64,8 @@ void loop()
     }
   }
 
-  //  switch to zero if no input pulse for 5 seconds
-  if (now - lastHigh > 5000)
+  //  switch to zero if no input pulse for STOPDELAY milliseconds
+  if (now - lastHigh > STOPDELAY)
   {
     outputInterval = 0;
   }
